@@ -36,7 +36,8 @@ Here is the output of all the model it found best:
 <p align="center"><img src="2.png"></p>
 
 ## Pipeline comparison
-Both models are very good. Though AutoML got a slightly better because of trying out lots of models. And found out that VotingEnsemble is the best model(91.60% Accuracy). Where in Hyperdrive it only used logistic regression model. In architecture AutoML was better because it tried a lot of different models, which was quite impossible if we have to do the same task with Hyperdrive because you have to create pipeline for every model.
+Both models are very good. Though AutoML got a slightly better because of trying out lots of models(54 models to be exact). And found out that VotingEnsemble is the best model(91.60% Accuracy). It also give warning about the imbalance of the dataset and how it may impact accuracy. Where in Hyperdrive it only used logistic regression model. In architecture AutoML was better because it tried a lot of different models, which was quite impossible if we have to do the same task with Hyperdrive because you have to create pipeline for every model.
+Also in hyperdrive we first cleaned  the dataset and fed into logistic regression model before we passed it into the hyperdrive for hyperparameter tuning. On the otherhand the cleaned data directly feed into the configure AutoML, which then output the best model.
 
 ## Future work
 I would like to add more hyper parameters to tweak the model more in depth to see the result. 
