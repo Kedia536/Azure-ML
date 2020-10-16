@@ -18,23 +18,25 @@ The performance of both models are good. Though Automl model got 91.60% Accuracy
 This is the diagram for both automl and hyper drive.
 
 ## Scikit-learn Pipeline
-We used TabularDatasetFactory to load the data and clean data using pandas. Both had been done in train.py Then we use SKLearn to run the train.py and feed hypderdrive config. HypderDrive later used different type of C and max_iter to find the best model.
+We used TabularDatasetFactory to load the data and clean data using pandas. The dataset is then split into 75/25.  All had been done in train.py Then we use SKLearn to run the train.py and feed hypderdrive config. The role of HypderDrive is then to vary the parameters C and max_iter so that the best performing model is found. We provided paramaeter space, sampling method, early termination policy, primary matric name and the goal to hyperdrive config to get the result.
 
 
-By using parameter sampling i tuned hyperparameter and tried to find the suitable spot of the model. I just didn't do an memory hungry search such as Grid Search. I used both uniform and discreate search for two parameters sampler. Which will be robust and also give an acceptable result.
+By using parameter sampling I tuned hyperparameter and tried to find the suitable spot of the model. I just didn't do an memory hungry search such as Grid Search. I used both uniform and discreate search for two parameters sampler. Which will be robust and also give an acceptable result. I didn't used bayesian sampling also for the same reason. It picks samples based on how previous samples performed. So bayesian is also expensive.
 
 
-We used early stopping policy to ensure that our model terminate poorly performing runs and save resources. We used BanditPolicy which ensure that any run will terminated if the primary matrics(Accuracy) of a run is less than the slack factor of best run. We use 0.1 for slack factor
+We used early stopping policy to ensure that our model terminate poorly performing runs and save resources. We used BanditPolicy which ensure that any run will terminated if the primary matrics(Accuracy) of a run is less than the slack factor of best run. We use 0.1 for slack factor. The slack factor defines how far off the primary metric of a run must be from the best performing run's for it to be terminated. Bandit is going to ensure that the train will continue untill the Accuracy won't drop more than the slack factor or It will terminate. That's why I choose BanditPolicy instead of Median Stopping Policy or Truncation selection policy.
 
 ## AutoML
-The AutoML is configured to allow 5 croos validation for the classification task.  The model output is a pipeline with 2 steps. 
+The AutoML is configured to allow 5 croos validation for the classification task. The models were XGBoost, LightGBM, RandomForests, BoostedTrees, SGDClassifier with varying input preprocessing normalizations like: Min Max Scaling, Standard Scaling etc. The model output is a pipeline with 2 steps. 
 - datatransformer
 - prefittedsoftvotingclassifier
 <br>
-for the classifier hyperparameters, penalty is set to l2 and max_iter is set to 1000. 
+The output shows that the datatransformer hyperparameters are set to None. For the classifier hyperparameters, penalty is set to l2 and max_iter is set to 1000. 
+Here is the output of all the model it found best:
+<p align="center"><img src="2.png"></p>
 
 ## Pipeline comparison
-Both models are very good. Though AutoML got a slightly better because of trying out lots of models. And found out that VotingEnsemble is the best model(91.60% Accuracy). Where in Hyperdrive it only used logistic regression model.
+Both models are very good. Though AutoML got a slightly better because of trying out lots of models. And found out that VotingEnsemble is the best model(91.60% Accuracy). Where in Hyperdrive it only used logistic regression model. In architecture AutoML was better because it tried a lot of different models, which was quite impossible if we have to do the same task with Hyperdrive because you have to create pipeline for every model.
 
 ## Future work
 I would like to add more hyper parameters to tweak the model more in depth to see the result. 
